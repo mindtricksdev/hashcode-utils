@@ -8,13 +8,14 @@
 
  - You'll get `firstLine` and `input` as input parameters (also parsed if any data is integer).
  
- Return the output data you want to be dumped to the output file, 
+ - Return the output data you want to be dumped to the output file, 
     - either as a string (whole file as string) OR
     - as an array (rows of strings) OR
     - as an array of arrays (rows and columns of strings or numbers).
     
-    Example:
+ - Example:
     `solution.js` - copies the input to the output
+    
     ```js
     const run = (firstLine, input) => {
       return [firstLine, input];
