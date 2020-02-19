@@ -6,7 +6,7 @@
 
 2. Open `solution.js` and start typing your solution.
 
-- You'll get `firstLine` and `input` as input parameters (values will be `number` if `parseInt` succeeds or `string`).
+- You'll get `firstLine` and `input` as input parameters (individual values will be `number` if `parseInt` succeeds or `string`).
 
 - Return the output data you want to be dumped to the output file,
   - either as a string (whole file as string) OR
@@ -16,7 +16,7 @@
   `solution.js` - copies the input to the output
   ```js
   const run = (firstLine, input) => {
-    return [firstLine, input];
+    return [firstLine].concat(input);
   };
   ```
 
