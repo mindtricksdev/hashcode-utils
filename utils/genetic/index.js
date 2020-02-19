@@ -1,13 +1,16 @@
 const Population = require("./population");
 
 //setup
-const MUTATION_RATE = 0.01;
-const POP_MAX = 100;
-const RUNS = 200;
+const MUTATION_RATE = 0.03;
+const POP_MAX = 300;
+const RUNS = 900;
 
-const start = (size, fitnessTarget, fitnessWeights) => {
+const start = (size, scoreTarget, fitnessWeights) => {
   //create population of N, with random DNA
-  const population = new Population(POP_MAX, MUTATION_RATE, size); //TODO: size
+  const population = new Population(POP_MAX, MUTATION_RATE, size, {
+    scoreTarget,
+    fitnessWeights
+  }); //TODO: size
   population.seed();
 
   const run = () => {
@@ -21,6 +24,8 @@ const start = (size, fitnessTarget, fitnessWeights) => {
     //add child to a new population
     //replace the old population with the new and return to selection
     population.generate();
+
+    console.log(population.generations, population.fittest.score);
   };
 
   while (population.generations < RUNS) {

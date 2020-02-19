@@ -1,6 +1,6 @@
 const Individual = require("./individual");
 
-function Population(maxIndividuals, mutationRate, individualSize) {
+function Population(maxIndividuals, mutationRate, individualSize, options) {
   this.population = [];
   this.matingPool = null;
   this.fittest = null;
@@ -8,6 +8,7 @@ function Population(maxIndividuals, mutationRate, individualSize) {
   this.mutationRate = mutationRate;
   this.maxIndividuals = maxIndividuals;
   this.individualSize = individualSize;
+  this.options = options;
 }
 
 Population.prototype.seed = function() {
@@ -23,8 +24,10 @@ Population.prototype.calculateFitness = function() {
   for (let i = 0; i < this.population.length; i++) {
     this.population[i].calculateFitness();
 
-    if (this.population[i].fitness > MAX_FITNESS)
+    if (this.population[i].fitness > MAX_FITNESS) {
       this.fittest = this.population[i];
+      MAX_FITNESS = this.fittest.fitness;
+    }
   }
 };
 
@@ -37,7 +40,7 @@ Population.prototype.naturalSelection = function() {
     if (this.fittest) {
       //individuals with higher fitness get selected more often
       const normalizedFitness = Math.floor(
-        (100 * this.population[i].fitness) / this.fittest.fitness
+        (100 * mate.fitness) / this.fittest.fitness
       );
       const N = normalizedFitness;
       for (let j = 0; j < N; j++) {
@@ -61,6 +64,9 @@ Population.prototype.generate = function() {
 
     this.population[i] = child;
   }
+
+  this.matingPool = [];
+  this.fitness = null;
 
   this.generations++;
 };

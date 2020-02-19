@@ -22,6 +22,7 @@ const getContent = data => {
     throw "Output data not found. You should return the output in order to be dumped!";
 
   if (typeof data === "string") return data;
+  if (typeof data === "number") return data + "";
   if (data.length) {
     //lines as array
     let output = "";
@@ -37,6 +38,7 @@ const getContent = data => {
 
 const serializeLine = line => {
   if (typeof line === "string") return line;
+  if (typeof line === "number") return line + "";
 
   if (line.length) {
     //columns as array
