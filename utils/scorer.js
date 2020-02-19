@@ -6,7 +6,7 @@ const FOLDER = "history/";
 const scorer = ({ sets, set, file }, firstInputLine, input, output) => {
   try {
     const score = scoreFn(output, firstInputLine, input);
-    if (score === null) return;
+    if (score === null || typeof score === "undefined") return;
 
     if (isNaN(score)) throw "Invalid output or score.";
 

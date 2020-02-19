@@ -22,17 +22,26 @@ chokidar
     score = parseInt(score);
     console.log("Set " + set + " scored " + score);
 
-    let docRef = db.collection("users").doc(NAME + "_" + set);
+    const docRef = db.collection("users").doc(NAME + "_" + set);
 
     docRef.get().then(doc => {
       let prev = {
-        max: -1
+        max: -1,
+        last: -1
       };
       if (!doc.exists) {
       } else {
         prev = doc.data();
 
-        if (prev.last === score) return;
+        if (!prev.max) prev.max = -1;
+        if (!prev.last) prev.last = -1;
+
+        if (prev.last === score) {
+          console.log(
+            " Skip update for set " + set + " scored the same " + score
+          );
+          return;
+        }
       }
 
       const next = {
@@ -47,6 +56,9 @@ chokidar
 
       docRef
         .set(next)
-        .then(() => console.log(" Updated set " + set + " scored " + score));
+        .then(() => console.log(" Updated set " + set + " scored " + score))
+        .catch(err =>
+          console.error(" Error updating set " + set + " . Error: " + err)
+        );
     });
   });
