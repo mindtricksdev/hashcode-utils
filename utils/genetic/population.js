@@ -6,11 +6,16 @@ function Population(maxIndividuals, mutationRate, individualSize) {
   this.fittest = null;
   this.generations = 0;
   this.mutationRate = mutationRate;
-
-  for (let i = 0; i < maxIndividuals; i++) {
-    this.population[i] = new Individual(individualSize);
-  }
+  this.maxIndividuals = maxIndividuals;
+  this.individualSize = individualSize;
 }
+
+Population.prototype.seed = function() {
+  for (let i = 0; i < this.maxIndividuals; i++) {
+    this.population[i] = new Individual(this.individualSize);
+    this.population[i].seed();
+  }
+};
 
 Population.prototype.calculateFitness = function() {
   let MAX_FITNESS = -1;

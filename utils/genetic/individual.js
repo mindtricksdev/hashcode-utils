@@ -1,15 +1,17 @@
 function Individual(size) {
   this.genes = [];
   this.fitness = null;
-
-  for (let i = 0; i < size; i++) {
-    //TODO: seed
-    this.genes[i] = Math.random() > 0.5 ? true : false;
-  }
 }
 
+Individual.prototype.seed = function() {
+  for (let i = 0; i < size; i++) {
+    //CUSTOM: seed
+    this.genes[i] = Math.random() > 0.5 ? true : false;
+  }
+};
+
 Individual.prototype.calculateFitness = function() {
-  //TODO: score function
+  //CUSTOM: score function
   this.fitness = -1;
 };
 
@@ -28,7 +30,7 @@ Individual.prototype.crossover = function(partner) {
 Individual.prototype.mutate = function(mutationRate) {
   for (let i = 0; i < this.genes.length; i++) {
     if (Math.random() < mutationRate) {
-      this.genes[i] = true; //TODO: new gene
+      this.genes[i] = true; //CUSTOM: new gene
     }
   }
 };
