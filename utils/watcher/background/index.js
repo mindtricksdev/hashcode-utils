@@ -14,7 +14,8 @@ let db = admin.firestore();
 
 chokidar
   .watch(".", {
-    cwd: "../../../history"
+    cwd: "../../../history",
+    ignoreInitial: true
   })
   .on("add", file => {
     let [set, score, sets] = file.split("__");
