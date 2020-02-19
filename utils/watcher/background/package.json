@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chokidar": "^3.3.1",
     "firebase-admin": "^8.9.2"
   }
 }
