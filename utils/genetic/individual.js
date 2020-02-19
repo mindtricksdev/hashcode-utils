@@ -8,12 +8,12 @@ function Individual(size) {
   }
 }
 
-Individual.prototype.calculateFitness = () => {
+Individual.prototype.calculateFitness = function() {
   //TODO: score function
   this.fitness = -1;
 };
 
-Individual.prototype.crossover = partner => {
+Individual.prototype.crossover = function(partner) {
   const child = new Individual(this.genes.length);
 
   const midpoint = Math.floor(Math.random() * this.genes.length);
@@ -25,7 +25,7 @@ Individual.prototype.crossover = partner => {
   return child;
 };
 
-Individual.prototype.mutate = mutationRate => {
+Individual.prototype.mutate = function(mutationRate) {
   for (let i = 0; i < this.genes.length; i++) {
     if (Math.random() < mutationRate) {
       this.genes[i] = true; //TODO: new gene

@@ -12,7 +12,7 @@ function Population(maxIndividuals, mutationRate, individualSize) {
   }
 }
 
-Population.prototype.calculateFitness = () => {
+Population.prototype.calculateFitness = function() {
   let MAX_FITNESS = -1;
   //calculate fitness for each individual
   for (let i = 0; i < this.population.length; i++) {
@@ -23,7 +23,7 @@ Population.prototype.calculateFitness = () => {
   }
 };
 
-Population.prototype.naturalSelection = () => {
+Population.prototype.naturalSelection = function() {
   //perform natural selection, generate mating pool
 
   this.matingPool = [];
@@ -40,7 +40,7 @@ Population.prototype.naturalSelection = () => {
   }
 };
 
-Population.prototype.generate = () => {
+Population.prototype.generate = function() {
   //next generation from mating pool created by natural selection
   for (let i = 0; i < this.population.length; i++) {
     const a = Math.floor(Math.random(this.matingPool.length));
@@ -56,7 +56,7 @@ Population.prototype.generate = () => {
   this.generations++;
 };
 
-Population.prototype.evaluate = () => {
+Population.prototype.evaluate = function() {
   //are we done?
 };
 

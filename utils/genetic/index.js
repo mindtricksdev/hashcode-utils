@@ -28,6 +28,9 @@ const start = () => {
     runs++;
   }
   console.log("Genetic algorithm finished after " + RUNS + " runs.");
+
+  //TODO: transform to indexes
+  return population.fittest;
 };
 
 module.exports = start;
