@@ -1,3 +1,7 @@
+# Score
+
+Obtained 1,505,004,616 max score.
+
 # hashcode-utils
 
 1. Place input data into `/in/` folder.
