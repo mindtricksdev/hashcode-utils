@@ -21,6 +21,8 @@ const start = (size, fitnessTarget, fitnessWeights) => {
     //add child to a new population
     //replace the old population with the new and return to selection
     population.generate();
+
+    console.log(population.generations, population.fittest.fitness);
   };
 
   while (population.generations < RUNS) {

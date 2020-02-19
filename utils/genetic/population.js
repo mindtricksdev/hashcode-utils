@@ -23,8 +23,10 @@ Population.prototype.calculateFitness = function() {
   for (let i = 0; i < this.population.length; i++) {
     this.population[i].calculateFitness();
 
-    if (this.population[i].fitness > MAX_FITNESS)
+    if (this.population[i].fitness > MAX_FITNESS) {
       this.fittest = this.population[i];
+      MAX_FITNESS = this.fittest.fitness;
+    }
   }
 };
 
