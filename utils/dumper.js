@@ -5,12 +5,15 @@ const FOLDER = "out/";
 const dumper = ({ file }, data) => {
   const content = getContent(data);
 
-  fs.writeFile(FOLDER + file, content, err => {
-    if (err) throw err;
+  const outFile = file.replace(".in", ".out").replace(".txt", ".out");
 
-    console.log(
-      "Write " + file + " (" + (content.length / 1024).toFixed(2) + " KB)"
-    );
+  console.log(
+    "\x1b[32m",
+    "-> Write " + outFile + " (" + (content.length / 1024).toFixed(2) + " KB)"
+  );
+
+  fs.writeFile(FOLDER + outFile, content, err => {
+    if (err) throw err;
   });
 };
 

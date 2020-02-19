@@ -21,7 +21,8 @@ const readInputSet = (set, cb) => {
         if (err) throw err;
 
         console.log(
-          "Read " + file + " (" + (data.length / 1024).toFixed(2) + " KB)"
+          "\x1b[32m",
+          "-> Read " + file + " (" + (data.length / 1024).toFixed(2) + " KB)"
         );
 
         //remove rows that are empty

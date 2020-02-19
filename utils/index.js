@@ -5,6 +5,7 @@
 
 const parser = require("./parser");
 const dumper = require("./dumper");
+const scorer = require("./scorer");
 
 const run = solver => {
   let arg = process.argv[2];
@@ -14,14 +15,16 @@ const run = solver => {
 
   parser(sets, ({ set, file }, firstLine, input) => {
     const start = Date.now();
-    console.log("Solving " + set + "...");
+    console.log("\x1b[3m", " > Solving " + set + "...");
     const output = solver(firstLine, input);
     const end = Date.now();
     console.log(
-      "Finished " + set + ". Took " + ((end - start) / 1000).toFixed(2) + "s"
+      "\x1b[3m",
+      " > Finished " + set + ". Took " + ((end - start) / 1000).toFixed(2) + "s"
     );
 
     dumper({ set, file }, output);
+    scorer({ sets, set, file }, firstLine, input, output);
   });
 };
 
