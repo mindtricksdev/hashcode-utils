@@ -29,12 +29,16 @@ Population.prototype.naturalSelection = function() {
   this.matingPool = [];
   for (let i = 0; i < this.population.length; i++) {
     const mate = this.population[i];
-    //individuals with higher fitness get selected more often
-    const normalizedFitness = Math.floor(
-      (100 * this.population[i].fitness) / this.fittest.fitness
-    );
-    const N = normalizedFitness;
-    for (let j = 0; j < N; j++) {
+    if (this.fittest) {
+      //individuals with higher fitness get selected more often
+      const normalizedFitness = Math.floor(
+        (100 * this.population[i].fitness) / this.fittest.fitness
+      );
+      const N = normalizedFitness;
+      for (let j = 0; j < N; j++) {
+        this.matingPool.push(mate);
+      }
+    } else {
       this.matingPool.push(mate);
     }
   }
@@ -43,11 +47,11 @@ Population.prototype.naturalSelection = function() {
 Population.prototype.generate = function() {
   //next generation from mating pool created by natural selection
   for (let i = 0; i < this.population.length; i++) {
-    const a = Math.floor(Math.random(this.matingPool.length));
-    const b = Math.floor(Math.random(this.matingPool.length));
+    const a = Math.floor(this.matingPool.length * Math.random());
+    const b = Math.floor(this.matingPool.length * Math.random());
     const partnerA = this.matingPool[a];
     const partnerB = this.matingPool[b];
-    const child = partnerA.crossOver(partnerB);
+    const child = partnerA.crossover(partnerB);
     child.mutate(this.mutationRate);
 
     this.population[i] = child;
