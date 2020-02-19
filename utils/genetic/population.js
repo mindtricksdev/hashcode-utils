@@ -12,7 +12,7 @@ function Population(maxIndividuals, mutationRate, individualSize) {
 
 Population.prototype.seed = function() {
   for (let i = 0; i < this.maxIndividuals; i++) {
-    this.population[i] = new Individual(this.individualSize);
+    this.population[i] = new Individual(this, this.individualSize);
     this.population[i].seed();
   }
 };

@@ -1,4 +1,5 @@
-function Individual(size) {
+function Individual(population, size) {
+  this.population = population;
   this.genes = [];
   this.fitness = null;
 }
@@ -16,7 +17,7 @@ Individual.prototype.calculateFitness = function() {
 };
 
 Individual.prototype.crossover = function(partner) {
-  const child = new Individual(this.genes.length);
+  const child = new Individual(this.population, this.genes.length);
 
   const midpoint = Math.floor(Math.random() * this.genes.length);
 
