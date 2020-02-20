@@ -25,23 +25,35 @@
 
 ## 3. Run the code and inspect the `/out/` folder
 
-- using vscode targets in debug (all sets at once or specific sets).
-- using CLI (run `node index` for all sets or `node index a,b,c` to execute the solution for specific set/s)
+- Use in debug with vscode targets (run all sets at once or one specific set).
+- Use as CLI (run `node index` for all sets or `node index a,b,c` to execute the solution for specific set/s)
 
 ## 4. Using a genetic algorithm (optional)
 
-- helpers are available in `/utils/genetic` folder.
-- you should implement some or all of the following prototype functions:
+- Use the helpers that are available in `/utils/genetic` folder.
+- Implement (by overriding) some or all of the following prototype functions:
 
 `solution.js` - using a simple genetic algorithm
 
 ```js
 const genetic = require("./utils/genetic");
 
-genetic.Individual.prototype.calculateFitness = function() {};
-genetic.Individual.prototype.seed = function() {};
-genetic.Individual.prototype.mutate = function() {};
-genetic.Individual.prototype.crossover = function(partner) {};
+genetic.Individual.prototype.calculateFitness = function() {
+  //TODO:
+};
+genetic.Individual.prototype.seed = function() {
+  //TODO:
+};
+genetic.Individual.prototype.mutate = function() {
+  //TODO:
+};
+genetic.Individual.prototype.crossover = function(partner) {
+  //TODO:
+};
+
+const decode = individual => {
+  //TODO:
+};
 
 const run = (firstLine, input) => {
   const fittest = genetic.start({
@@ -52,7 +64,8 @@ const run = (firstLine, input) => {
     settings: {}
   });
 
-  return toFile(fittest);
+  //decode the individual into solution
+  return decode(fittest);
 };
 
 module.exports = run;
@@ -60,6 +73,11 @@ module.exports = run;
 
 ## 5. Scoring (optional)
 
-- if you write the `score` function in `score.js` file, it will also keep a history of your rans and it will be accessible at `https://hashcodeutils.web.app/`.
-- install and launch `node index {YOUR_NAME}` from `/utils/watcher/background` to start the watcher. Leave this open in the background while writing and running your solution.
-- note that you need the secret key in `/utils/watcher/background/private` to write to our firestore db.
+- Write the `score` function in `score.js` file to see a nice output in the console debug.
+
+- Collaborative
+
+  - If you have a scoring function, the tool will keep the history of your rans and it will be accessible at `https://hashcodeutils.web.app/`.
+  - Install and launch `node index {YOUR_NAME}` from `/utils/watcher/background` to start the watcher
+    - Leave this open in the background while writing and running your solution.
+    - Note that you need the secret key in `/utils/watcher/background/private` to write to our firestore db.
