@@ -22,7 +22,7 @@ const run = (firstLine, input) => {
     const [N, T, M] = input[lIdx * 2 + 1];
     const books = input[lIdx * 2 + 2];
     libraries.push({
-      index: lIdx,
+      id: lIdx,
       N,
       T,
       M,
@@ -30,7 +30,30 @@ const run = (firstLine, input) => {
     });
   }
 
-  return [[3], [0, 2, 3]];
+  //--- CODE HERE
+
+  //--- CODE HERE
+
+  const libs = [
+    {
+      id: 1,
+      books: [5, 2, 3]
+    },
+    {
+      id: 0,
+      books: [0, 1, 2, 3, 4]
+    }
+  ];
+
+  //dump
+  const result = [[libs.length]];
+  for (let lIdx = 0; lIdx < libs.length; lIdx++) {
+    let lib = libs[lIdx];
+    result.push([lib.id, lib.books.length]);
+    result.push(lib.books);
+  }
+
+  return result;
 };
 
 module.exports = run;
