@@ -1,11 +1,16 @@
-function Individual(population, size) {
+/**
+ * @param {import('./population')} population
+ */
+function Individual(population) {
   this.population = population;
+
   this.genes = [];
+  this.size = this.population.options.individualSize;
   this.fitness = null;
 }
 
 Individual.prototype.seed = function() {
-  for (let i = 0; i < size; i++) {
+  for (let i = 0; i < this.size; i++) {
     //CUSTOM: seed
     this.genes[i] = Math.random() > 0.5 ? true : false;
   }
@@ -13,11 +18,11 @@ Individual.prototype.seed = function() {
 
 Individual.prototype.calculateFitness = function() {
   //CUSTOM: score function
-  this.fitness = -1;
+  this.fitness = 0;
 };
 
 Individual.prototype.crossover = function(partner) {
-  const child = new Individual(this.population, this.genes.length);
+  const child = new Individual(this.population);
 
   const midpoint = Math.floor(Math.random() * this.genes.length);
 
@@ -28,9 +33,9 @@ Individual.prototype.crossover = function(partner) {
   return child;
 };
 
-Individual.prototype.mutate = function(mutationRate) {
+Individual.prototype.mutate = function() {
   for (let i = 0; i < this.genes.length; i++) {
-    if (Math.random() < mutationRate) {
+    if (Math.random() < this.population.options.mutationRate) {
       this.genes[i] = true; //CUSTOM: new gene
     }
   }

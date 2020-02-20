@@ -10,7 +10,10 @@ const scorer = ({ sets, set, file }, firstInputLine, input, output) => {
 
     if (isNaN(score)) throw "Invalid output or score.";
 
-    console.log("\x1b[42m", "\x1b[30m", "> Score for " + set + ": " + score);
+    console.log(
+      "\x1b[42m\x1b[30m%s\x1b[0m",
+      "=> Score for " + set + ": " + score
+    );
 
     const fileName =
       set +
