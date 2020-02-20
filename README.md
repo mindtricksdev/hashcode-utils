@@ -2,23 +2,26 @@
 
 1. Place input data into `/in/` folder.
 
-- Note that the set file names should start with `a`, `b`, `c`, `d` and `e`. Example: `a_example.in` or `c_medium.txt`
+   - Note that the set file names should start with `a`, `b`, `c`, `d` and `e`. Example: `a_example.in` or `c_medium.txt`
 
 2. Open `solution.js` and start typing your solution.
 
-- You'll get `firstLine` and `input` as input parameters (individual values will be `number` if `parseInt` succeeds or `string`).
+   - You'll get `firstLine` and `input` as input parameters (individual values will be `number` if `parseInt` succeeds or `string`).
 
-- Return the output data you want to be dumped to the output file,
-  - either as a string (whole file as string) OR
-  - as an array (rows of strings) OR
-  - as an array of arrays (rows and columns of strings or numbers).
-- Example:
-  `solution.js` - copies the input to the output
-  ```js
-  const run = (firstLine, input) => {
-    return [firstLine].concat(input);
-  };
-  ```
+   - Return the output data you want to be dumped to the output file,
+
+     - either as a string (whole file as string) OR
+     - as an array (rows of strings) OR
+     - as an array of arrays (rows and columns of strings or numbers).
+
+   - Example:
+     `solution.js` - copies the input to the output
+
+```js
+const run = (firstLine, input) => {
+  return [firstLine].concat(input);
+};
+```
 
 3. Run the code and inspect the `/out/` folder
 
@@ -58,5 +61,5 @@ module.exports = run;
 5. Scoring (optional)
 
    - if you write the `score` function in `score.js` file, it will also keep a history of your rans and it will be accessible at `https://hashcodeutils.web.app/`.
-   - install and launch `node index {YOUR_NAME}` from `utils/watcher/background` to start the watcher. Leave this open in the background while running your solution.
+   - install and launch `node index {YOUR_NAME}` from `utils/watcher/background` to start the watcher. Leave this open in the background while writing and running your solution.
    - note that you need the secret key in `utils/watcher/background/private` to write to our firestore db.
