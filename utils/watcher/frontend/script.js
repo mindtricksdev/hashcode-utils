@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const users = [];
     querySnapshot.forEach(function(doc) {
       const userSet = doc.data();
-      const crtName = userSet.name.toLowerCase();
+      const crtName = userSet.name;
       const crtSet = doc.id.replace(crtName + "_", "");
 
       let user = users.find(u => u.name === crtName);
@@ -69,7 +69,7 @@ const render = (users, uiMarkers) => {
 
 const renderUserRow = (user, uiMarkers) => {
   return `<tr>
-		<td>${user.name}</td>
+		<td>${user.name.toLowerCase()}</td>
 		<td class="score">${renderScoreCell(user.sets.a, uiMarkers)}</td>
 		<td class="score">${renderScoreCell(user.sets.b, uiMarkers)}</td>
 		<td class="score">${renderScoreCell(user.sets.c, uiMarkers)}</td>
