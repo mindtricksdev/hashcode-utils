@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const users = [];
     querySnapshot.forEach(function(doc) {
       const userSet = doc.data();
-      const crtName = userSet.name;
+      const crtName = userSet.name.toLowerCase();
       const crtSet = doc.id.replace(crtName + "_", "");
 
       let user = users.find(u => u.name === crtName);
