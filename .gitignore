@@ -1,2 +1,4 @@
+out/*
 history/*
 utils/watcher/background/node_modules/*
+utils/watcher/background/private/*
