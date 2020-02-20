@@ -14,6 +14,22 @@
 // });
 
 const run = (firstLine, input) => {
+  const [B, L, D] = firstLine;
+  const scores = input[0];
+
+  const libraries = [];
+  for (let lIdx = 0; lIdx < L; lIdx++) {
+    const [N, T, M] = input[lIdx * 2 + 1];
+    const books = input[lIdx * 2 + 2];
+    libraries.push({
+      index: lIdx,
+      N,
+      T,
+      M,
+      books
+    });
+  }
+
   return [[3], [0, 2, 3]];
 };
 
