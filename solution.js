@@ -1,5 +1,5 @@
-const genetic = require("./utils/genetic");
 //Use the helpers below to run a genetic algorithm
+// const genetic = require("./utils/genetic");
 // genetic.Individual.prototype.calculateFitness = function() {};
 // genetic.Individual.prototype.seed = function() {};
 // genetic.Individual.prototype.mutate = function() {};

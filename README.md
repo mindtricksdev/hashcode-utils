@@ -25,7 +25,37 @@
    - using vscode targets in debug (all sets at once or specific sets).
    - using CLI (run `node index` for all sets or `node index a,b,c` to execute the solution for specific set/s)
 
-4. Scoring (optional)
+4. Using a genetic algorithm (optional)
+
+   - helpers are available in `utils/genetic` folder.
+   - you should implement some or all of the following prototype functions:
+
+`solution.js`
+
+```js
+const genetic = require("./utils/genetic");
+
+genetic.Individual.prototype.calculateFitness = function() {};
+genetic.Individual.prototype.seed = function() {};
+genetic.Individual.prototype.mutate = function() {};
+genetic.Individual.prototype.crossover = function(partner) {};
+
+const run = (firstLine, input) => {
+  const fittest = genetic.start({
+    mutationRate: 0.01,
+    maxIndividuals: 200,
+    generations: 900,
+    individualSize: 20,
+    settings: {}
+  });
+
+  return toFile(fittest);
+};
+
+module.exports = run;
+```
+
+5. Scoring (optional)
 
    - if you write the `score` function in `score.js` file, it will also keep a history of your rans and it will be accessible at `https://hashcodeutils.web.app/`.
    - install and launch `node index {YOUR_NAME}` from `utils/watcher/background` to start the watcher. Leave this open in the background while running your solution.
