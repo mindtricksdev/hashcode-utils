@@ -14,14 +14,14 @@
      - as an array (rows of strings) OR
      - as an array of arrays (rows and columns of strings or numbers).
 
-   - Example:
+   - Dummy example:
      `solution.js` - copies the input to the output
 
-```js
-const run = (firstLine, input) => {
-  return [firstLine].concat(input);
-};
-```
+     ```js
+     const run = (firstLine, input) => {
+       return [firstLine].concat(input);
+     };
+     ```
 
 3. Run the code and inspect the `/out/` folder
 
@@ -35,28 +35,28 @@ const run = (firstLine, input) => {
 
 `solution.js`
 
-```js
-const genetic = require("./utils/genetic");
+     ```js
+     const genetic = require("./utils/genetic");
 
-genetic.Individual.prototype.calculateFitness = function() {};
-genetic.Individual.prototype.seed = function() {};
-genetic.Individual.prototype.mutate = function() {};
-genetic.Individual.prototype.crossover = function(partner) {};
+     genetic.Individual.prototype.calculateFitness = function() {};
+     genetic.Individual.prototype.seed = function() {};
+     genetic.Individual.prototype.mutate = function() {};
+     genetic.Individual.prototype.crossover = function(partner) {};
 
-const run = (firstLine, input) => {
-  const fittest = genetic.start({
-    mutationRate: 0.01,
-    maxIndividuals: 200,
-    generations: 900,
-    individualSize: 20,
-    settings: {}
-  });
+     const run = (firstLine, input) => {
+       const fittest = genetic.start({
+         mutationRate: 0.01,
+         maxIndividuals: 200,
+         generations: 900,
+         individualSize: 20,
+         settings: {}
+       });
 
-  return toFile(fittest);
-};
+       return toFile(fittest);
+     };
 
-module.exports = run;
-```
+     module.exports = run;
+     ```
 
 5. Scoring (optional)
 
