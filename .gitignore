@@ -2,3 +2,8 @@ out/*
 history/*
 utils/watcher/background/node_modules/*
 utils/watcher/background/private/*
+out/a_example.out
+out/b_small.out
+out/c_medium.out
+out/d_quite_big.out
+out/e_also_big.out
