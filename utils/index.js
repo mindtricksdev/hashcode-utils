@@ -9,7 +9,7 @@ const scorer = require("./scorer");
 
 const run = solver => {
   let arg = process.argv[2];
-  if (!arg) arg = "a,b,c,d,e";
+  if (!arg) arg = "a,b,c,d,e,f";
 
   const sets = arg.split(",");
 

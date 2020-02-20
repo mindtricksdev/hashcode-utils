@@ -10,7 +10,7 @@
       "name": "All",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.js",
-      "args": ["a,b,c,d,e"]
+      "args": ["a,b,c,d,e,f"]
     },
     {
       "type": "node",
@@ -51,6 +51,15 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.js",
       "args": ["e"]
+    },
+    ,
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Set F (much big)",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/index.js",
+      "args": ["f"]
     }
   ]
 }
