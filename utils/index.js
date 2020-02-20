@@ -15,11 +15,11 @@ const run = solver => {
 
   parser(sets, ({ set, file }, firstLine, input) => {
     const start = Date.now();
-    console.log("\x1b[3m", " > Solving " + set + "...");
+    console.log("\x1b[3m%s\x1b[0m", " > Solving " + set + "...");
     const output = solver(firstLine, input);
     const end = Date.now();
     console.log(
-      "\x1b[3m",
+      "\x1b[3m%s\x1b[0m",
       " > Finished " + set + ". Took " + ((end - start) / 1000).toFixed(2) + "s"
     );
 

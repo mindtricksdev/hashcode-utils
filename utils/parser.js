@@ -21,7 +21,7 @@ const readInputSet = (set, cb) => {
         if (err) throw err;
 
         console.log(
-          "\x1b[32m",
+          "\x1b[32m%s\x1b[0m",
           "-> Read " + file + " (" + (data.length / 1024).toFixed(2) + " KB)"
         );
 

@@ -1,18 +1,27 @@
 const Individual = require("./individual");
 
-function Population(maxIndividuals, mutationRate, individualSize) {
-  this.population = [];
-  this.matingPool = null;
-  this.fittest = null;
+const DEFAULT_OPTIONS = {
+  mutationRate: 0.01,
+  maxIndividuals: 100,
+  generations: 200,
+  individualSize: 20,
+  settings: {}
+};
+
+function Population(options = DEFAULT_OPTIONS) {
+  this.options = options;
+
   this.generations = 0;
-  this.mutationRate = mutationRate;
-  this.maxIndividuals = maxIndividuals;
-  this.individualSize = individualSize;
+
+  this.population = [];
+  this.fittest = null;
+
+  this.matingPool = null;
 }
 
 Population.prototype.seed = function() {
-  for (let i = 0; i < this.maxIndividuals; i++) {
-    this.population[i] = new Individual(this, this.individualSize);
+  for (let i = 0; i < this.options.maxIndividuals; i++) {
+    this.population[i] = new Individual(this);
     this.population[i].seed();
   }
 };
@@ -23,6 +32,10 @@ Population.prototype.calculateFitness = function() {
   for (let i = 0; i < this.population.length; i++) {
     this.population[i].calculateFitness();
 
+    if (typeof this.population[i].fitness !== "number")
+      throw "Individual fitness should be a number but received " +
+        this.population[i].fitness;
+
     if (this.population[i].fitness > MAX_FITNESS) {
       this.fittest = this.population[i];
       MAX_FITNESS = this.fittest.fitness;
@@ -32,11 +45,10 @@ Population.prototype.calculateFitness = function() {
 
 Population.prototype.naturalSelection = function() {
   //perform natural selection, generate mating pool
-
   this.matingPool = [];
   for (let i = 0; i < this.population.length; i++) {
     const mate = this.population[i];
-    if (this.fittest) {
+    if (this.fittest && this.fittest.fitness > 0) {
       //individuals with higher fitness get selected more often
       const normalizedFitness = Math.floor(
         (100 * this.population[i].fitness) / this.fittest.fitness
@@ -59,16 +71,17 @@ Population.prototype.generate = function() {
     const partnerA = this.matingPool[a];
     const partnerB = this.matingPool[b];
     const child = partnerA.crossover(partnerB);
-    child.mutate(this.mutationRate);
+    if (!child)
+      throw "A child should result from crossover. Check that you implemented the crossover function or use the default function.";
+
+    child.mutate();
 
     this.population[i] = child;
   }
 
-  this.generations++;
-};
+  this.matingPool = [];
 
-Population.prototype.evaluate = function() {
-  //are we done?
+  this.generations++;
 };
 
 module.exports = Population;

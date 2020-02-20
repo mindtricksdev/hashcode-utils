@@ -8,7 +8,7 @@ const dumper = ({ file }, data) => {
   const outFile = file.replace(".in", ".out").replace(".txt", ".out");
 
   console.log(
-    "\x1b[32m",
+    "\x1b[32m%s\x1b[0m",
     "-> Write " + outFile + " (" + (content.length / 1024).toFixed(2) + " KB)"
   );
 

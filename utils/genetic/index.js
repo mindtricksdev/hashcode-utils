@@ -1,13 +1,17 @@
 const Population = require("./population");
+const Individual = require("./individual");
 
-//setup
-const MUTATION_RATE = 0.01;
-const POP_MAX = 100;
-const RUNS = 200;
+const DEFAULT_OPTIONS = {
+  mutationRate: 0.01,
+  maxIndividuals: 100,
+  generations: 200,
+  individualSize: 20,
+  settings: {}
+};
 
-const start = (size, fitnessTarget, fitnessWeights) => {
+const start = (options = DEFAULT_OPTIONS) => {
   //create population of N, with random DNA
-  const population = new Population(POP_MAX, MUTATION_RATE, size); //TODO: size
+  const population = new Population(options);
   population.seed();
 
   const run = () => {
@@ -22,19 +26,29 @@ const start = (size, fitnessTarget, fitnessWeights) => {
     //replace the old population with the new and return to selection
     population.generate();
 
-    console.log(population.generations, population.fittest.fitness);
+    if (!population.fittest) throw "Fittest individual could not be determined";
+    console.log(
+      "\x1b[36m%s\x1b[0m",
+      population.fittest.fitness +
+        " (" +
+        population.generations +
+        " generation)"
+    );
   };
 
-  while (population.generations < RUNS) {
+  while (population.generations < options.generations) {
     run();
   }
 
   console.log(
-    "Genetic algorithm finished after " + population.generations + " runs."
+    "\x1b[34m%s\x1b[0m",
+    " > Genetic algorithm finished after " + population.generations + " runs."
   );
 
   //CUSTOM: transform to indexes
   return population.fittest;
 };
 
-module.exports = start;
+exports.start = start;
+exports.Population = Population;
+exports.Individual = Individual;
