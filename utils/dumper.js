@@ -12,6 +12,7 @@ const dumper = ({ file }, data) => {
     "-> Write " + outFile + " (" + (content.length / 1024).toFixed(2) + " KB)"
   );
 
+  if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER);
   fs.writeFile(FOLDER + outFile, content, err => {
     if (err) throw err;
   });

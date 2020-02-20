@@ -26,6 +26,7 @@ const scorer = ({ sets, set, file }, firstInputLine, input, output) => {
 
     const scorePath = FOLDER + fileName;
 
+    if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER);
     fs.writeFile(scorePath, "", err => {
       if (err) throw err;
     });
