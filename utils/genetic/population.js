@@ -15,6 +15,7 @@ function Population(options = DEFAULT_OPTIONS) {
 
   this.population = [];
   this.fittest = null;
+  this.fittestEver = null;
 
   this.matingPool = null;
 }
@@ -40,6 +41,11 @@ Population.prototype.calculateFitness = function() {
       this.fittest = this.population[i];
       MAX_FITNESS = this.fittest.fitness;
     }
+  }
+
+  if (!this.fittestEver) this.fittestEver = this.fittest;
+  if (this.fittest.fitness > this.fittestEver.fitness) {
+    this.fittestEver = this.fittest;
   }
 };
 

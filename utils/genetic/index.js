@@ -30,6 +30,8 @@ const start = (options = DEFAULT_OPTIONS) => {
     console.log(
       "\x1b[36m%s\x1b[0m",
       population.fittest.fitness +
+        " / " +
+        population.fittestEver.fitness +
         " (" +
         population.generations +
         " generation)"
@@ -46,7 +48,7 @@ const start = (options = DEFAULT_OPTIONS) => {
   );
 
   //CUSTOM: transform to indexes
-  return population.fittest;
+  return population.fittestEver;
 };
 
 exports.start = start;
