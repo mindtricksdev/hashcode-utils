@@ -1,215 +1,190 @@
 const genetic = require("./utils/genetic");
-// const calculateScore = require("./score");
 
-const calculateScore = function(libs, settings) {
-  const { D, scores, libraries } = settings;
-
-  let signingThreadDays = 0;
-
-  const scanned = [];
-
-  let score = 0;
-  libs.forEach(lib => {
-    const library = libraries.find(l => l.id === lib.id);
-    const daysToSignUp = library.T;
-    const perDay = library.M;
-
-    //sign up
-    signingThreadDays += daysToSignUp;
-    const daysLeft = D - signingThreadDays;
-    let bIdx = 0;
-    for (let d = 0; d < daysLeft; d++) {
-      if (typeof lib.books[bIdx] === "undefined") break;
-      for (let b = 0; b < perDay; b++) {
-        if (typeof lib.books[bIdx] === "undefined") break;
-
-        score +=
-          scanned.indexOf(lib.books[bIdx]) > -1 ? scores[lib.books[bIdx]] : 0;
-        bIdx++;
-        scanned.push(lib.books[bIdx]);
-      }
-    }
-  });
-
-  return score;
-};
-
-genetic.Individual.prototype.seed = function() {
+genetic.Individual.prototype.seed = function(index) {
   const libCount = this.population.options.settings.L;
   const libraries = this.population.options.settings.libraries;
-  // const scores = this.population.options.settings.scores;
 
-  const libs = [];
-  for (let i = 0; i < libCount; i++) {
-    libs.push(i);
-  }
-  shuffle(libs);
+  let libs = null;
+  if (index > 0) libs = shuffleRandomPart(arrayOfIncrements(libCount));
+  else
+    libs = arrayOfIncrements(libCount).sort(
+      (a, b) => libraries[a].T - libraries[b].T
+      // (a, b) => libraries[b].M - libraries[a].M
+    );
 
-  this.genes = [];
-  for (let i = 0; i < libCount; i++) {
-    const crtLib = libs[i];
-    this.genes.push("L" + crtLib);
+  this.genes = [libs];
+  for (let i = 0; i < libs.length; i++) {
+    //add library
+    const crtLibrary = libraries[libs[i]];
+
     //add books
-    const libBooks = [...libraries[crtLib].books];
-    // libBooks.sort((a, b) => scores[b] - scores[a]);
-    shuffle(libBooks);
+    const books = [];
+    const libBooks = [...crtLibrary.books];
+    if (index > 0) shuffleRandomPart(libBooks);
+
     for (let b = 0; b < libBooks.length; b++) {
-      this.genes.push(libBooks[b]);
+      books.push(libBooks[b]);
     }
+    this.genes.push(books);
   }
+};
+
+genetic.Individual.prototype.crossover = function(partner) {
+  const child = new genetic.Individual(this.population);
+
+  const thisSegmentSize = Math.floor(Math.random() * this.genes.length);
+  //take first segment of libraries from this
+  child.genes[0] = [];
+  for (let i = 0; i < thisSegmentSize; i++) {
+    const libId = this.genes[0][i];
+    child.genes[0].push(libId);
+
+    //pick books from both parents
+    let libraryBooks = [];
+    if (Math.random() > 0.5) {
+      libraryBooks = [...this.genes[1 + i]];
+    } else {
+      const libIdxInPartner = 1 + partner.genes[0].indexOf(libId);
+      libraryBooks = [...partner.genes[libIdxInPartner]];
+    }
+
+    child.genes.push(libraryBooks);
+  }
+
+  //the other segment from partner
+  for (let i = 0; i < partner.genes[0].length; i++) {
+    //pick the remaining libraries from the partner
+    const libId = partner.genes[0][i];
+    if (child.genes[0].indexOf(libId) > -1) continue;
+
+    child.genes[0].push(libId);
+
+    //pick books from both parents
+    let libraryBooks = [];
+    if (Math.random() > 0.5) {
+      libraryBooks = [...partner.genes[1 + i]];
+    } else {
+      const libIdxInMe = 1 + this.genes[0].indexOf(libId);
+      libraryBooks = [...this.genes[libIdxInMe]];
+    }
+
+    child.genes.push(libraryBooks);
+  }
+
+  //optimize child?
+
+  return child;
 };
 
 genetic.Individual.prototype.calculateFitness = function() {
-  const libs = decode(this);
-  this.fitness = calculateScore(libs, this.population.options.settings);
+  const { D, scores, libraries } = this.population.options.settings;
+  const libsToScan = decode(this);
+
+  const scannedBooks = {};
+
+  let score = 0;
+  const timeline = arrayOfIncrements(D);
+
+  let canSignUpLibs = true;
+  timeline.forEach(timeSlot => {
+    libsToScan.forEach(libToScan => {
+      if (libToScan.done) return;
+
+      if (!libToScan.startedSignUp) {
+        if (canSignUpLibs) {
+          //start sign up
+          libToScan.startedSignUp = true;
+          libToScan.startedSignUpAt = timeSlot;
+          canSignUpLibs = false;
+        }
+        return;
+      }
+
+      const library = libraries[libToScan.id];
+      const perDay = library.M;
+
+      if (!libToScan.endedSignUp) {
+        //finish sign up
+        const daysToSignUp = library.T;
+        if (libToScan.startedSignUpAt + daysToSignUp === timeSlot) {
+          //signing finished in the previous timeslot
+          libToScan.endedSignUp = true;
+          libToScan.endedSignUpAt = timeSlot - 1;
+          canSignUpLibs = true;
+
+          //process first books
+          const dayBooks = arrayOfIncrements(perDay);
+          dayBooks.forEach(idx => {
+            const book = libToScan.books[idx];
+
+            if (typeof book === "undefined") return; //no more books to scan
+            if (scannedBooks[book]) return; //already scanned
+
+            scannedBooks[book] = true;
+            score += scores[book];
+          });
+        }
+        return;
+      }
+
+      //start scanning books
+      const daysElapsedAfterSignUp = timeSlot - libToScan.endedSignUpAt;
+      const dayBooks = arrayOfIncrements(perDay);
+      dayBooks.forEach(idx => {
+        const book =
+          libToScan.books[(daysElapsedAfterSignUp - 1) * perDay + idx];
+
+        if (typeof book === "undefined") {
+          libToScan.done = true;
+          return; //no more books to scan
+        }
+        if (scannedBooks[book]) return; //already scanned
+
+        scannedBooks[book] = true;
+        score += scores[book];
+      });
+    });
+  });
+
+  this.fitness = score;
 };
 
 const decode = individual => {
-  const libs = [];
-
-  let crtLib = null;
-  for (let gIdx = 0; gIdx < individual.genes.length; gIdx++) {
-    const gene = individual.genes[gIdx];
-    if (typeof gene === "string") {
-      crtLib = {
-        id: parseInt(gene.replace("L", ""), 10),
-        books: []
-      };
-      libs.push(crtLib);
-    } else {
-      crtLib.books.push(gene);
-    }
-  }
-
-  return libs;
+  const libsToScan = individual.genes[0].map((id, index) => {
+    return {
+      id,
+      books: individual.genes[1 + index]
+    };
+  });
+  return libsToScan;
 };
 
 genetic.Individual.prototype.mutate = function() {
   if (Math.random() > this.population.options.mutationRate) return;
 
-  //shuffle books in lib
-  const libIdxs = [];
-  for (let gIdx = 0; gIdx < this.genes.length; gIdx++) {
-    const gene = this.genes[gIdx];
-    if (typeof gene === "string") {
-      libIdxs.push(gIdx);
+  if (Math.random() > 0.5) {
+    //shuffle random libraries book order
+    const libCount = this.genes.length - 1;
+    let libsToMutate = Math.floor(Math.random() * libCount);
+    while (libsToMutate >= 0) {
+      const randomLibIdx = 1 + Math.floor(Math.random() * libCount);
+      shuffle(this.genes[randomLibIdx]);
+      libsToMutate--;
     }
+  } else {
+    //change library order
+    const libs = this.genes[0];
+    const aIdx = Math.floor(Math.random() * libs.length);
+    const bIdx = Math.floor(Math.random() * libs.length);
+
+    //swap a with b
+    [libs[aIdx], libs[bIdx]] = [libs[bIdx], libs[aIdx]];
+    //swap book segments
+    [this.genes[1 + aIdx], this.genes[1 + bIdx]] = [
+      this.genes[1 + bIdx],
+      this.genes[1 + aIdx]
+    ];
   }
-
-  if (libIdxs.length > 1) {
-    const randomLib = Math.floor((libIdxs.length - 1) * Math.random());
-    const gIdxStart = libIdxs[randomLib];
-    if (typeof gIdxStart !== "undefined" && libIdxs[randomLib + 1]) {
-      const gIdxEnd = libIdxs[randomLib + 1];
-
-      const slice = this.genes.slice(gIdxStart, gIdxEnd);
-      const l = slice.shift();
-      shuffle(slice);
-      this.genes.splice(gIdxStart, slice.length + 1, l, ...slice);
-    }
-  }
-};
-genetic.Individual.prototype.crossover = function(partner) {
-  const aLibIdxs = [];
-  for (let gIdx = 0; gIdx < this.genes.length; gIdx++) {
-    const gene = this.genes[gIdx];
-    if (typeof gene === "string") {
-      aLibIdxs.push({
-        start: gIdx,
-        id: parseInt(gene.replace("L", ""))
-      });
-    }
-  }
-  const aLibs = [];
-  for (let i = 0; i < aLibIdxs.length; i++) {
-    if (aLibIdxs[i + 1]) {
-      aLibs.push({
-        id: aLibIdxs[i].id,
-        start: aLibIdxs[i].start,
-        end: aLibIdxs[i + 1].start
-      });
-    } else {
-      aLibs.push({
-        id: aLibIdxs[i].id,
-        start: aLibIdxs[i].start,
-        end: this.genes.length
-      });
-    }
-  }
-
-  const bLibIdxs = [];
-  for (let gIdx = 0; gIdx < partner.genes.length; gIdx++) {
-    const gene = partner.genes[gIdx];
-    if (typeof gene === "string") {
-      bLibIdxs.push({
-        start: gIdx,
-        id: parseInt(gene.replace("L", ""))
-      });
-    }
-  }
-  const bLibs = [];
-  for (let i = 0; i < bLibIdxs.length; i++) {
-    if (bLibIdxs[i + 1]) {
-      bLibs.push({
-        id: bLibIdxs[i].id,
-        start: bLibIdxs[i].start,
-        end: bLibIdxs[i + 1].start
-      });
-    } else {
-      bLibs.push({
-        id: bLibIdxs[i].id,
-        start: bLibIdxs[i].start,
-        end: partner.genes.length
-      });
-    }
-  }
-
-  const child = new genetic.Individual(this.population);
-  child.genes = [];
-  const ids = aLibs.map(i => i.id);
-  shuffle(ids);
-
-  // const prevSegments = [];
-  for (let i = 0; i < ids.length; i++) {
-    const libId = ids[i];
-    let segment;
-    if (Math.random() > 0.5) {
-      let slice = aLibs.find(l => l.id === libId);
-      segment = this.genes.slice(slice.start, slice.end);
-    } else {
-      let slice = bLibs.find(l => l.id === libId);
-      segment = partner.genes.slice(slice.start, slice.end);
-    }
-
-    const libI = segment.shift();
-    // segment = smartShuffle(segment, prevSegments);
-
-    child.genes.push(libI);
-    child.genes = child.genes.concat(segment);
-    // prevSegments.push(segment);
-  }
-  return child;
-};
-
-const smartShuffle = (segment, prevSegments) => {
-  const out = [];
-
-  for (let i = 0; i < segment.length; i++) {
-    const gene = segment[i];
-    let last = false;
-    for (let s = 0; s < prevSegments.length; s++) {
-      const bookIdx = prevSegments[s].indexOf(gene);
-      if (bookIdx > -1 && bookIdx < prevSegments[s].length / 2) {
-        last = true;
-        break;
-      }
-    }
-
-    if (last) out.push(gene);
-    else out.unshift(gene);
-  }
-
-  return out;
 };
 
 const run = (firstLine, input) => {
@@ -220,37 +195,37 @@ const run = (firstLine, input) => {
   for (let lIdx = 0; lIdx < L; lIdx++) {
     const [N, T, M] = input[lIdx * 2 + 1];
     const books = input[lIdx * 2 + 2];
-    libraries.push({
+    const library = {
       id: lIdx,
       N,
       T,
       M,
-      books
-    });
+      books: books.sort((a, b) => scores[b] - scores[a])
+    };
+    libraries.push(library);
   }
 
   //--- CODE HERE
 
   const fittest = genetic.start({
-    mutationRate: 0.05,
-    maxIndividuals: 10,
-    generations: 10,
-    individualSize: B + L,
+    keepFittestAlive: true,
+    mutationRate: 0.15,
+    maxIndividuals: 30,
+    generations: 200,
+    individualSize: 1 + L,
     settings: {
       libraries,
       B,
       L,
       D,
-      scores,
-      firstLine,
-      input
+      scores
     }
   });
 
   //--- CODE HERE
 
-  const libs = decode(fittest);
-  return dumpLibs(libs);
+  const libsToUse = decode(fittest);
+  return dumpLibs(libsToUse);
 };
 
 const dumpLibs = libs => {
@@ -263,10 +238,26 @@ const dumpLibs = libs => {
   return result;
 };
 
-function shuffle(a) {
-  a.sort(function() {
-    return 0.5 - Math.random();
-  });
-}
+const shuffle = a => {
+  a.sort(() => 0.5 - Math.random());
+  return a;
+};
+const shuffleRandomPart = a => {
+  let start = Math.floor(Math.random() * a.length);
+  let end = Math.floor(Math.random() * a.length);
+  if (start > end) [start, end] = [end, start];
+
+  const slice = shuffle(a.slice(start, end));
+  a.splice(start, slice.length, ...slice);
+  return a;
+};
+
+const arrayOfIncrements = n => {
+  const a = [];
+  for (let i = 0; i < n; i++) {
+    a.push(i);
+  }
+  return a;
+};
 
 module.exports = run;

@@ -1,6 +1,7 @@
 const Individual = require("./individual");
 
 const DEFAULT_OPTIONS = {
+  keepFittestAlive: false,
   mutationRate: 0.01,
   maxIndividuals: 100,
   generations: 200,
@@ -23,7 +24,7 @@ function Population(options = DEFAULT_OPTIONS) {
 Population.prototype.seed = function() {
   for (let i = 0; i < this.options.maxIndividuals; i++) {
     this.population[i] = new Individual(this);
-    this.population[i].seed();
+    this.population[i].seed(i);
   }
 };
 
@@ -57,7 +58,7 @@ Population.prototype.naturalSelection = function() {
     if (this.fittest && this.fittest.fitness > 0) {
       //individuals with higher fitness get selected more often
       const normalizedFitness = Math.floor(
-        (100 * this.population[i].fitness) / this.fittest.fitness
+        (100 * this.population[i].fitness) / this.fittestEver.fitness
       );
       const N = normalizedFitness;
       for (let j = 0; j < N; j++) {
@@ -71,7 +72,14 @@ Population.prototype.naturalSelection = function() {
 
 Population.prototype.generate = function() {
   //next generation from mating pool created by natural selection
-  for (let i = 0; i < this.population.length; i++) {
+
+  let startFrom = 0;
+  if (this.options.keepFittestAlive) {
+    startFrom = 1;
+    this.population[0] = this.fittestEver;
+  }
+
+  for (let i = startFrom; i < this.population.length; i++) {
     const a = Math.floor(this.matingPool.length * Math.random());
     const b = Math.floor(this.matingPool.length * Math.random());
     const partnerA = this.matingPool[a];
