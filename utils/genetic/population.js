@@ -1,6 +1,7 @@
 const Individual = require("./individual");
 
 const DEFAULT_OPTIONS = {
+  keepFittestAlive: false,
   mutationRate: 0.01,
   maxIndividuals: 100,
   generations: 200,
@@ -23,7 +24,7 @@ function Population(options = DEFAULT_OPTIONS) {
 Population.prototype.seed = function() {
   for (let i = 0; i < this.options.maxIndividuals; i++) {
     this.population[i] = new Individual(this);
-    this.population[i].seed();
+    this.population[i].seed(i);
   }
 };
 
@@ -47,6 +48,8 @@ Population.prototype.calculateFitness = function() {
   if (this.fittest.fitness > this.fittestEver.fitness) {
     this.fittestEver = this.fittest;
   }
+
+  this.population = this.population.sort((a, b) => b.fitness - a.fitness);
 };
 
 Population.prototype.naturalSelection = function() {
@@ -57,7 +60,7 @@ Population.prototype.naturalSelection = function() {
     if (this.fittest && this.fittest.fitness > 0) {
       //individuals with higher fitness get selected more often
       const normalizedFitness = Math.floor(
-        (100 * this.population[i].fitness) / this.fittest.fitness
+        (100 * this.population[i].fitness) / this.fittestEver.fitness
       );
       const N = normalizedFitness;
       for (let j = 0; j < N; j++) {
@@ -71,16 +74,47 @@ Population.prototype.naturalSelection = function() {
 
 Population.prototype.generate = function() {
   //next generation from mating pool created by natural selection
-  for (let i = 0; i < this.population.length; i++) {
+
+  let startFrom = 0;
+  if (this.options.keepFittestAlive) {
+    startFrom = 1;
+    this.population[0] = this.fittestEver;
+    if (this.fittest !== this.fittestEver) {
+      this.population[1] = this.fittest;
+      startFrom = 2;
+    }
+  }
+
+  this.population = this.population.sort((a, b) => b.fitness - a.fitness);
+
+  for (let i = startFrom; i < startFrom + 5; i++) {
+    //preserve
+  }
+  startFrom = startFrom + 3;
+
+  for (let i = startFrom; i < this.population.length; i++) {
     const a = Math.floor(this.matingPool.length * Math.random());
-    const b = Math.floor(this.matingPool.length * Math.random());
+    let b = Math.floor(this.matingPool.length * Math.random());
     const partnerA = this.matingPool[a];
-    const partnerB = this.matingPool[b];
+    let partnerB = this.matingPool[b];
+    while (partnerA === partnerB) {
+      b = Math.floor(this.matingPool.length * Math.random());
+      partnerB = this.matingPool[b];
+    }
     const child = partnerA.crossover(partnerB);
     if (!child)
       throw "A child should result from crossover. Check that you implemented the crossover function or use the default function.";
 
+    child.calculateFitness();
+
+    // if (child.fitness > this.fittest.fitness)
+    // console.log("c", child.fitness, this.fittest.fitness);
+
+    // const before = child.fitness;
     child.mutate();
+    child.calculateFitness();
+    // const after = child.fitness;
+    // if (after > before) console.log("m", after, before);
 
     this.population[i] = child;
   }

@@ -13,7 +13,7 @@
 //   settings: {}
 // });
 
-const run = (firstLine, input) => {
+const run = (firstLine, input, env) => {
   const [B, L, D] = firstLine;
   const scores = input[0];
 

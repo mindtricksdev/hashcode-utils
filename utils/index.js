@@ -6,6 +6,7 @@
 const parser = require("./parser");
 const dumper = require("./dumper");
 const scorer = require("./scorer");
+const array = require("./array");
 
 const run = solver => {
   let arg = process.argv[2];
@@ -16,15 +17,28 @@ const run = solver => {
   parser(sets, ({ set, file }, firstLine, input) => {
     const start = Date.now();
     console.log("\x1b[3m%s\x1b[0m", " > Solving " + set + "...");
-    const output = solver(firstLine, input);
+
+    const env = {
+      sets,
+      set,
+      file,
+      array,
+      return: output => {
+        //when multiple solution are given per run
+        // - genetic algorithm
+        dumper(env, output);
+        scorer(env, firstLine, input, output);
+      }
+    };
+
+    const output = solver(firstLine, input, env);
     const end = Date.now();
     console.log(
       "\x1b[3m%s\x1b[0m",
       " > Finished " + set + ". Took " + ((end - start) / 1000).toFixed(2) + "s"
     );
 
-    dumper({ set, file }, output);
-    scorer({ sets, set, file }, firstLine, input, output);
+    env.return(output);
   });
 };
 

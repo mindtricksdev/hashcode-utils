@@ -3,7 +3,7 @@ const scoreFn = require("../score");
 
 const FOLDER = "history/";
 
-const scorer = ({ sets, set, file }, firstInputLine, input, output) => {
+const scorer = ({ sets, set }, firstInputLine, input, output) => {
   try {
     const score = scoreFn(output, firstInputLine, input);
     if (score === null || typeof score === "undefined") return;

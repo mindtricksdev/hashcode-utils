@@ -39,6 +39,8 @@ const getContent = data => {
 const serializeLine = line => {
   if (typeof line === "string") return line;
 
+  if (line.length === 0) throw "Empty line received";
+
   if (line.length) {
     //columns as array
     let output = "";
