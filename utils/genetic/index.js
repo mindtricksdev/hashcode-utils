@@ -6,7 +6,8 @@ const DEFAULT_OPTIONS = {
   maxIndividuals: 100,
   generations: 200,
   individualSize: 20,
-  settings: {}
+  settings: {},
+  onFittest: fittest => {}
 };
 
 const TOOK = {
@@ -54,6 +55,8 @@ const start = (options = DEFAULT_OPTIONS) => {
         " (gen " + population.generations + ")",
         100 - (100 * maxFitness) / population.fittestEver.fitness
       );
+
+      if (options.onFittest) options.onFittest(population.fittestEver);
     } else {
       console.log(
         "\x1b[37m %s \x1b[0m-%d%",

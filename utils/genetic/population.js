@@ -48,6 +48,8 @@ Population.prototype.calculateFitness = function() {
   if (this.fittest.fitness > this.fittestEver.fitness) {
     this.fittestEver = this.fittest;
   }
+
+  this.population = this.population.sort((a, b) => b.fitness - a.fitness);
 };
 
 Population.prototype.naturalSelection = function() {
@@ -77,18 +79,42 @@ Population.prototype.generate = function() {
   if (this.options.keepFittestAlive) {
     startFrom = 1;
     this.population[0] = this.fittestEver;
+    if (this.fittest !== this.fittestEver) {
+      this.population[1] = this.fittest;
+      startFrom = 2;
+    }
   }
+
+  this.population = this.population.sort((a, b) => b.fitness - a.fitness);
+
+  for (let i = startFrom; i < startFrom + 5; i++) {
+    //preserve
+  }
+  startFrom = startFrom + 3;
 
   for (let i = startFrom; i < this.population.length; i++) {
     const a = Math.floor(this.matingPool.length * Math.random());
-    const b = Math.floor(this.matingPool.length * Math.random());
+    let b = Math.floor(this.matingPool.length * Math.random());
     const partnerA = this.matingPool[a];
-    const partnerB = this.matingPool[b];
+    let partnerB = this.matingPool[b];
+    while (partnerA === partnerB) {
+      b = Math.floor(this.matingPool.length * Math.random());
+      partnerB = this.matingPool[b];
+    }
     const child = partnerA.crossover(partnerB);
     if (!child)
       throw "A child should result from crossover. Check that you implemented the crossover function or use the default function.";
 
+    child.calculateFitness();
+
+    // if (child.fitness > this.fittest.fitness)
+    // console.log("c", child.fitness, this.fittest.fitness);
+
+    // const before = child.fitness;
     child.mutate();
+    child.calculateFitness();
+    // const after = child.fitness;
+    // if (after > before) console.log("m", after, before);
 
     this.population[i] = child;
   }
