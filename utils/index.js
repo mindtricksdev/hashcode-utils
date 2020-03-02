@@ -7,6 +7,7 @@ const parser = require("./parser");
 const dumper = require("./dumper");
 const scorer = require("./scorer");
 const array = require("./array");
+const log = require("./log");
 
 const run = solver => {
   let arg = process.argv[2];
@@ -23,6 +24,7 @@ const run = solver => {
       set,
       file,
       array,
+      log,
       return: output => {
         //when multiple solution are given per run
         // - genetic algorithm
