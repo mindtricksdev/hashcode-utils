@@ -1,18 +1,3 @@
-//Use the helpers below to run a genetic algorithm
-// const genetic = require("./utils/genetic");
-// genetic.Individual.prototype.calculateFitness = function() {};
-// genetic.Individual.prototype.seed = function() {};
-// genetic.Individual.prototype.mutate = function() {};
-// genetic.Individual.prototype.crossover = function(partner) {};
-
-// genetic.start({
-//   mutationRate: 0.01,
-//   maxIndividuals: 200,
-//   generations: 900,
-//   individualSize: 20,
-//   settings: {}
-// });
-
 const run = (firstLine, input, env) => {
   const [B, L, D] = firstLine;
   const scores = input[0];
@@ -30,6 +15,14 @@ const run = (firstLine, input, env) => {
     });
   }
 
+  env.global = {
+    libraries,
+    scores,
+    B,
+    L,
+    D
+  };
+
   //--- CODE HERE
 
   //--- CODE HERE
@@ -45,6 +38,9 @@ const run = (firstLine, input, env) => {
     }
   ];
 
+  const crtScore = score(env, libs);
+  env.log.green(crtScore);
+
   //dump
   const result = [[libs.length]];
   for (let lIdx = 0; lIdx < libs.length; lIdx++) {
@@ -54,6 +50,10 @@ const run = (firstLine, input, env) => {
   }
 
   return result;
+};
+
+const score = (env, libs) => {
+  return 5;
 };
 
 module.exports = run;
