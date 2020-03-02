@@ -53,7 +53,7 @@ const run = (firstLine, input, env) => {
 };
 
 const score = (env, libs) => {
-  return 5;
+  return 7;
 };
 
 module.exports = run;
